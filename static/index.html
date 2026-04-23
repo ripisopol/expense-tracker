@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expenses</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: monospace;
+      background: #0d0d0d;
+      color: #e8e8e8;
+      min-height: 100vh;
+      padding: 32px;
+    }
+
+    /* AUTH PAGE */
+    .auth-page {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 32px;
+    }
+
+    .auth-box {
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .auth-title {
+      font-size: 22px;
+      color: #c8f135;
+      margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+      font-size: 12px;
+      color: #555;
+      margin-bottom: 32px;
+    }
+
+    .auth-field {
+      margin-bottom: 14px;
+    }
+
+    .auth-field label {
+      display: block;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    .auth-field input {
+      width: 100%;
+      font-family: monospace;
+      font-size: 13px;
+      background: #141414;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: #e8e8e8;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .auth-field input:focus { border-color: #c8f135; }
+
+    .auth-actions {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .auth-error {
+      font-size: 12px;
+      color: #ef4444;
+      margin-top: 12px;
+      min-height: 16px;
+    }
+
+    .auth-toggle {
+      font-size: 12px;
+      color: #555;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .auth-toggle span {
+      color: #c8f135;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* MAIN APP */
+    .app-page { display: none; }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    h1 { font-size: 20px; color: #c8f135; }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .user-info span { color: #888; }
+
+    /* Summary */
+    .summary {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .summary-card {
+      background: #141414;
+      border: 1px solid #252525;
+      border-radius: 6px;
+      padding: 12px 16px;
+      min-width: 140px;
+    }
+
+    .summary-label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+    .summary-value { font-size: 18px; font-weight: bold; color: #c8f135; }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    input, select {
+      font-family: monospace;
+      font-size: 12px;
+      background: #141414;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: #e8e8e8;
+      padding: 7px 10px;
+      outline: none;
+      transition: border-color 0.15s;
+      color-scheme: dark;
+    }
+
+    input:focus, select:focus { border-color: #c8f135; }
+    select option { background: #141414; }
+
+    button {
+      font-family: monospace;
+      font-size: 12px;
+      padding: 7px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 1px solid #333;
+      background: transparent;
+      color: #888;
+      transition: all 0.15s;
+    }
+
+    button:hover { color: #e8e8e8; border-color: #e8e8e8; }
+    button.primary { background: #c8f135; border-color: #c8f135; color: #0d0d0d; font-weight: bold; }
+    button.primary:hover { background: #a8cc20; }
+    button.danger:hover { color: #ef4444; border-color: #ef4444; }
+    button.save:hover { color: #c8f135; border-color: #c8f135; }
+    button.logout:hover { color: #ef4444; border-color: #ef4444; }
+
+    /* Time picker */
+    .time-picker { position: relative; display: inline-block; }
+
+    .time-picker-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      background: #141414;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: #e8e8e8;
+      cursor: pointer;
+      font-family: monospace;
+      font-size: 12px;
+      transition: border-color 0.15s;
+    }
+
+    .time-picker-btn:hover { border-color: #c8f135; }
+    .time-picker-btn .icon { color: #555; font-size: 11px; }
+
+    .time-picker-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 8px;
+      z-index: 50;
+      width: 380px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .time-picker-dropdown.open { display: flex; gap: 8px; }
+
+    .quick-ranges { display: flex; flex-direction: column; gap: 2px; min-width: 140px; }
+    .quick-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #555; padding: 4px 8px; margin-bottom: 2px; }
+
+    .quick-btn {
+      text-align: left;
+      padding: 6px 10px;
+      border-radius: 3px;
+      font-size: 12px;
+      border: none;
+      color: #888;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.1s;
+      width: 100%;
+    }
+
+    .quick-btn:hover { background: #252525; color: #e8e8e8; border: none; }
+    .quick-btn.active { background: #252525; color: #c8f135; border: none; }
+
+    .custom-range {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border-left: 1px solid #252525;
+      padding-left: 8px;
+    }
+
+    .custom-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #555; margin-bottom: 2px; }
+    .custom-range input { width: 100%; font-size: 11px; padding: 6px 8px; }
+
+    .apply-btn {
+      margin-top: 4px;
+      width: 100%;
+      padding: 6px;
+      background: #c8f135;
+      border-color: #c8f135;
+      color: #0d0d0d;
+      font-weight: bold;
+      font-size: 11px;
+    }
+
+    .apply-btn:hover { background: #a8cc20; }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+    th:nth-child(1) { width: 120px; }
+    th:nth-child(2) { width: 130px; }
+    th:nth-child(3) { width: auto; }
+    th:nth-child(4) { width: 150px; }
+    th:nth-child(5) { width: 140px; }
+
+    th {
+      text-align: left;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #555;
+      padding: 8px 12px;
+      border-bottom: 1px solid #252525;
+    }
+
+    td { padding: 8px 12px; border-bottom: 1px solid #1a1a1a; vertical-align: middle; }
+    tr:hover td { background: #141414; }
+    .amount { color: #c8f135; font-weight: bold; }
+
+    .category {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      display: inline-block;
+    }
+
+    .empty { text-align: center; color: #555; padding: 40px; font-size: 12px; }
+
+    .row-input {
+      font-family: monospace;
+      font-size: 12px;
+      background: #0d0d0d;
+      border: 1px solid #c8f135;
+      border-radius: 3px;
+      color: #e8e8e8;
+      padding: 4px 8px;
+      width: 100%;
+      color-scheme: dark;
+    }
+
+    .row-input:focus { outline: none; }
+    select.row-input { cursor: pointer; }
+    .action-btns { display: flex; gap: 4px; justify-content: flex-end; }
+
+    /* Modal */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .overlay.open { display: flex; }
+
+    .modal {
+      background: #141414;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 24px;
+      width: 100%;
+      max-width: 400px;
+      animation: slideUp 0.15s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal h2 { font-size: 14px; color: #c8f135; margin-bottom: 20px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #555; margin-bottom: 6px; }
+    .field input, .field select { width: 100%; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <!-- AUTH PAGE -->
+  <div class="auth-page" id="auth-page">
+    <div class="auth-box">
+      <div class="auth-title">expenses</div>
+      <div class="auth-subtitle" id="auth-subtitle">sign in to your account</div>
+
+      <div class="auth-field">
+        <label>Username</label>
+        <input type="text" id="auth-username" placeholder="yourname" autocomplete="username" />
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') submitAuth()" />
+      </div>
+
+      <div class="auth-error" id="auth-error"></div>
+
+      <div class="auth-actions">
+        <button class="primary" onclick="submitAuth()" id="auth-btn">sign in</button>
+      </div>
+
+      <div class="auth-toggle">
+        <span id="auth-toggle-text">don't have an account? <span onclick="toggleAuthMode()">register</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP PAGE -->
+  <div class="app-page" id="app-page">
+    <div class="app-header">
+      <h1>expenses</h1>
+      <div class="user-info">
+        <span id="username-display"></span>
+        <button class="logout" onclick="logout()">logout</button>
+      </div>
+    </div>
+
+    <div class="summary">
+      <div class="summary-card">
+        <div class="summary-label">Showing</div>
+        <div class="summary-value" id="total">0</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">This Month</div>
+        <div class="summary-value" id="month-total">0</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Entries</div>
+        <div class="summary-value" id="count">0</div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <select id="filter-category" onchange="loadExpenses()">
+        <option value="">all categories</option>
+        <option value="food">food</option>
+        <option value="transport">transport</option>
+        <option value="bills">bills</option>
+        <option value="ngopay">ngopay</option>
+        <option value="other">other</option>
+      </select>
+
+      <div class="time-picker" id="time-picker">
+        <button class="time-picker-btn" onclick="toggleTimePicker()">
+          <span class="icon">🕐</span>
+          <span id="time-label">This month</span>
+          <span class="icon">▾</span>
+        </button>
+        <div class="time-picker-dropdown" id="time-dropdown">
+          <div class="quick-ranges">
+            <div class="quick-label">Quick ranges</div>
+            <button class="quick-btn" onclick="applyQuick('today', 'Today')">Today</button>
+            <button class="quick-btn" onclick="applyQuick('yesterday', 'Yesterday')">Yesterday</button>
+            <button class="quick-btn" onclick="applyQuick('last7', 'Last 7 days')">Last 7 days</button>
+            <button class="quick-btn" onclick="applyQuick('last30', 'Last 30 days')">Last 30 days</button>
+            <button class="quick-btn active" onclick="applyQuick('thisMonth', 'This month')">This month</button>
+            <button class="quick-btn" onclick="applyQuick('lastMonth', 'Last month')">Last month</button>
+            <button class="quick-btn" onclick="applyQuick('thisYear', 'This year')">This year</button>
+            <button class="quick-btn" onclick="applyQuick('all', 'All time')">All time</button>
+          </div>
+          <div class="custom-range">
+            <div class="custom-label">Custom range</div>
+            <div>
+              <div style="font-size:10px;color:#555;margin-bottom:4px;">From</div>
+              <input type="date" id="custom-from" />
+            </div>
+            <div>
+              <div style="font-size:10px;color:#555;margin-bottom:4px;">To</div>
+              <input type="date" id="custom-to" />
+            </div>
+            <button class="apply-btn" onclick="applyCustom()">Apply</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="primary" onclick="openModal()">+ add expense</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Amount</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="expense-list"></tbody>
+    </table>
+
+    <div class="overlay" id="overlay">
+      <div class="modal">
+        <h2>add expense</h2>
+        <div class="field">
+          <label>Amount (IDR)</label>
+          <input type="number" id="input-amount" placeholder="50000" />
+        </div>
+        <div class="field">
+          <label>Category</label>
+          <select id="input-category">
+            <option value="food">food</option>
+            <option value="transport">transport</option>
+            <option value="bills">bills</option>
+            <option value="ngopay">ngopay</option>
+            <option value="other">other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <input type="text" id="input-desc" placeholder="optional" />
+        </div>
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="input-date" />
+        </div>
+        <div class="modal-actions">
+          <button onclick="closeModal()">cancel</button>
+          <button class="primary" onclick="submitExpense()">save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- State ---
+    let token = localStorage.getItem('token')
+    let currentUsername = localStorage.getItem('username')
+    let isRegisterMode = false
+    let dateFrom = null
+    let dateTo = null
+
+    // --- Init ---
+    document.getElementById('input-date').value = new Date().toISOString().split('T')[0]
+
+    if (token) {
+      showApp()
+    } else {
+      showAuth()
+    }
+
+    // --- Auth ---
+    function showAuth() {
+      document.getElementById('auth-page').style.display = 'flex'
+      document.getElementById('app-page').style.display = 'none'
+    }
+
+    function showApp() {
+      document.getElementById('auth-page').style.display = 'none'
+      document.getElementById('app-page').style.display = 'block'
+      document.getElementById('username-display').textContent = currentUsername || ''
+      applyQuick('thisMonth', 'This month')
+    }
+
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode
+      document.getElementById('auth-btn').textContent = isRegisterMode ? 'register' : 'sign in'
+      document.getElementById('auth-subtitle').textContent = isRegisterMode ? 'create an account' : 'sign in to your account'
+      document.getElementById('auth-toggle-text').innerHTML = isRegisterMode
+        ? 'already have an account? <span onclick="toggleAuthMode()">sign in</span>'
+        : 'don\'t have an account? <span onclick="toggleAuthMode()">register</span>'
+      document.getElementById('auth-error').textContent = ''
+    }
+
+    async function submitAuth() {
+      const username = document.getElementById('auth-username').value.trim()
+      const password = document.getElementById('auth-password').value
+      if (!username || !password) {
+        document.getElementById('auth-error').textContent = 'username and password required'
+        return
+      }
+
+      if (isRegisterMode) {
+        const res = await fetch('/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        })
+        if (!res.ok) {
+          const err = await res.json()
+          document.getElementById('auth-error').textContent = err.detail || 'registration failed'
+          return
+        }
+        // auto-login after register
+        isRegisterMode = false
+        await submitAuth()
+        return
+      }
+
+      // Login via OAuth2 form
+      const form = new URLSearchParams()
+      form.append('username', username)
+      form.append('password', password)
+
+      const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: form
+      })
+
+      if (!res.ok) {
+        document.getElementById('auth-error').textContent = 'incorrect username or password'
+        return
+      }
+
+      const data = await res.json()
+      token = data.access_token
+      localStorage.setItem('token', token)
+      localStorage.setItem('username', username)
+      currentUsername = username
+      showApp()
+    }
+
+    function logout() {
+      token = null
+      currentUsername = null
+      localStorage.removeItem('token')
+      localStorage.removeItem('username')
+      showAuth()
+    }
+
+    // --- Authed fetch ---
+    function authFetch(url, options = {}) {
+      return fetch(url, {
+        ...options,
+        headers: {
+          ...(options.headers || {}),
+          'Authorization': `Bearer ${token}`
+        }
+      })
+    }
+
+    // --- Helpers ---
+    function formatIDR(amount) {
+      return 'Rp ' + amount.toLocaleString('id-ID')
+    }
+
+    function getCurrentMonth() {
+      return new Date().toISOString().slice(0, 7)
+    }
+
+    function toISO(d) {
+      const offset = d.getTimezoneOffset()
+      const local = new Date(d.getTime() - offset * 60000)
+      return local.toISOString().split('T')[0]
+    }
+
+    // --- Time picker ---
+    function toggleTimePicker() {
+      document.getElementById('time-dropdown').classList.toggle('open')
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!document.getElementById('time-picker').contains(e.target)) {
+        document.getElementById('time-dropdown').classList.remove('open')
+      }
+    })
+
+    function applyQuick(range, label) {
+      const now = new Date()
+      const today = toISO(now)
+
+      if (range === 'today') {
+        dateFrom = today; dateTo = today
+      } else if (range === 'yesterday') {
+        const y = new Date(now); y.setDate(y.getDate() - 1)
+        dateFrom = toISO(y); dateTo = toISO(y)
+      } else if (range === 'last7') {
+        const d = new Date(now); d.setDate(d.getDate() - 6)
+        dateFrom = toISO(d); dateTo = today
+      } else if (range === 'last30') {
+        const d = new Date(now); d.setDate(d.getDate() - 29)
+        dateFrom = toISO(d); dateTo = today
+      } else if (range === 'thisMonth') {
+        dateFrom = `${getCurrentMonth()}-01`; dateTo = today
+      } else if (range === 'lastMonth') {
+        const d = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+        const last = new Date(now.getFullYear(), now.getMonth(), 0)
+        dateFrom = toISO(d); dateTo = toISO(last)
+      } else if (range === 'thisYear') {
+        dateFrom = `${now.getFullYear()}-01-01`; dateTo = today
+      } else if (range === 'all') {
+        dateFrom = null; dateTo = null
+      }
+
+      document.getElementById('time-label').textContent = label
+      document.querySelectorAll('.quick-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent === label)
+      })
+      document.getElementById('time-dropdown').classList.remove('open')
+      loadExpenses()
+    }
+
+    function applyCustom() {
+      const from = document.getElementById('custom-from').value
+      const to = document.getElementById('custom-to').value
+      if (!from || !to) { alert('Select both from and to dates'); return }
+      dateFrom = from; dateTo = to
+      document.getElementById('time-label').textContent = `${from} → ${to}`
+      document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('active'))
+      document.getElementById('time-dropdown').classList.remove('open')
+      loadExpenses()
+    }
+
+    // --- Expenses ---
+    async function loadExpenses() {
+      const category = document.getElementById('filter-category').value
+      const params = new URLSearchParams()
+      if (category) params.append('category', category)
+      if (dateFrom) params.append('from_date', dateFrom)
+      if (dateTo) params.append('to_date', dateTo)
+      const url = '/expenses' + (params.toString() ? '?' + params.toString() : '')
+      const res = await authFetch(url)
+      if (res.status === 401) { logout(); return }
+      const expenses = await res.json()
+      renderTable(expenses)
+      updateSummary(expenses)
+    }
+
+    function renderTable(expenses) {
+      const tbody = document.getElementById('expense-list')
+      tbody.innerHTML = ''
+      if (expenses.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty">no expenses found</td></tr>'
+        return
+      }
+      expenses.forEach(exp => {
+        const tr = document.createElement('tr')
+        tr.dataset.id = exp.id
+        tr.innerHTML = `
+          <td>${exp.date}</td>
+          <td><span class="category">${exp.category}</span></td>
+          <td style="color:#888">${exp.description || '—'}</td>
+          <td class="amount">${formatIDR(exp.amount)}</td>
+          <td>
+            <div class="action-btns">
+              <button onclick="editRow(${exp.id}, '${exp.date}', '${exp.category}', '${exp.description || ''}', ${exp.amount})">edit</button>
+              <button class="danger" onclick="deleteExpense(${exp.id})">delete</button>
+            </div>
+          </td>
+        `
+        tbody.appendChild(tr)
+      })
+    }
+
+    function editRow(id, date, category, description, amount) {
+      event.stopPropagation()
+      const tr = document.querySelector(`tr[data-id="${id}"]`)
+      tr.innerHTML = `
+        <td><input class="row-input" type="date" id="edit-date-${id}" value="${date}" /></td>
+        <td>
+          <select class="row-input" id="edit-category-${id}">
+            <option value="food" ${category==='food'?'selected':''}>food</option>
+            <option value="transport" ${category==='transport'?'selected':''}>transport</option>
+            <option value="bills" ${category==='bills'?'selected':''}>bills</option>
+            <option value="ngopay" ${category==='ngopay'?'selected':''}>ngopay</option>
+            <option value="other" ${category==='other'?'selected':''}>other</option>
+          </select>
+        </td>
+        <td><input class="row-input" type="text" id="edit-desc-${id}" value="${description}" /></td>
+        <td><input class="row-input" type="number" id="edit-amount-${id}" value="${amount}" /></td>
+        <td>
+          <div class="action-btns">
+            <button class="save" onclick="saveRow(${id})">save</button>
+            <button onclick="event.stopPropagation(); loadExpenses()">cancel</button>
+          </div>
+        </td>
+      `
+    }
+
+    async function saveRow(id) {
+      const date = document.getElementById(`edit-date-${id}`).value
+      const category = document.getElementById(`edit-category-${id}`).value
+      const description = document.getElementById(`edit-desc-${id}`).value
+      const amount = parseFloat(document.getElementById(`edit-amount-${id}`).value)
+
+      const res = await authFetch(`/expenses/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date, category, description, amount })
+      })
+
+      if (res.status === 401) { logout(); return }
+      if (!res.ok) {
+        const err = await res.json()
+        console.error('PATCH error:', err)
+        return
+      }
+      loadExpenses()
+    }
+
+    async function updateSummary(filteredExpenses) {
+      const total = filteredExpenses.reduce((sum, e) => sum + e.amount, 0)
+      document.getElementById('total').textContent = formatIDR(total)
+      document.getElementById('count').textContent = filteredExpenses.length
+
+      const now = new Date()
+      const firstDay = `${getCurrentMonth()}-01`
+      const today = toISO(now)
+      const res = await authFetch(`/expenses?from_date=${firstDay}&to_date=${today}`)
+      if (res.status === 401) { logout(); return }
+      const monthExpenses = await res.json()
+      const monthTotal = monthExpenses.reduce((sum, e) => sum + e.amount, 0)
+      document.getElementById('month-total').textContent = formatIDR(monthTotal)
+    }
+
+    function openModal() { document.getElementById('overlay').classList.add('open') }
+    function closeModal() { document.getElementById('overlay').classList.remove('open') }
+
+    async function submitExpense() {
+      const amount = parseFloat(document.getElementById('input-amount').value)
+      const category = document.getElementById('input-category').value
+      const description = document.getElementById('input-desc').value
+      const date = document.getElementById('input-date').value
+      if (!amount || !date) { alert('Amount and date are required'); return }
+
+      const res = await authFetch('/expenses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, category, description, date })
+      })
+
+      if (res.status === 401) { logout(); return }
+      closeModal()
+      document.getElementById('input-amount').value = ''
+      document.getElementById('input-desc').value = ''
+      loadExpenses()
+    }
+
+    async function deleteExpense(id) {
+      const res = await authFetch(`/expenses/${id}`, { method: 'DELETE' })
+      if (res.status === 401) { logout(); return }
+      loadExpenses()
+    }
+  </script>
+</body>
+</html>
