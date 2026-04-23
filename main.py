@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
 from datetime import date, datetime, timedelta
 from pydantic import BaseModel
 from typing import Optional
@@ -13,7 +14,7 @@ from models import Expense, User
 
 SECRET_KEY = "change-this-to-a-random-secret-in-production"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -33,7 +34,6 @@ def root():
 def health():
     return {"status": "ok"}
 
-
 # --- Auth helpers ---
 
 def hash_password(password: str) -> str:
@@ -48,21 +48,22 @@ def create_access_token(data: dict) -> str:
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
+def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+):
     credentials_exception = HTTPException(status_code=401, detail="Invalid credentials")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: int = payload.get("sub")
+        user_id = payload.get("sub")
         if user_id is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    db = get_db()
     user = db.query(User).filter(User.id == int(user_id)).first()
     if user is None:
         raise credentials_exception
     return user
-
 
 # --- Auth routes ---
 
@@ -71,8 +72,7 @@ class RegisterSchema(BaseModel):
     password: str
 
 @app.post("/register", status_code=201)
-def register(body: RegisterSchema):
-    db = get_db()
+def register(body: RegisterSchema, db: Session = Depends(get_db)):
     if db.query(User).filter(User.username == body.username).first():
         raise HTTPException(status_code=400, detail="Username already taken")
     user = User(username=body.username, password_hash=hash_password(body.password))
@@ -82,8 +82,7 @@ def register(body: RegisterSchema):
     return {"id": user.id, "username": user.username}
 
 @app.post("/login")
-def login(form: OAuth2PasswordRequestForm = Depends()):
-    db = get_db()
+def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == form.username).first()
     if not user or not verify_password(form.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Incorrect username or password")
@@ -93,7 +92,6 @@ def login(form: OAuth2PasswordRequestForm = Depends()):
 @app.get("/me")
 def me(current_user: User = Depends(get_current_user)):
     return {"id": current_user.id, "username": current_user.username}
-
 
 # --- Expense schemas ---
 
@@ -109,7 +107,6 @@ class ExpenseUpdateSchema(BaseModel):
     category: Optional[str] = None
     description: Optional[str] = None
 
-
 # --- Expense routes ---
 
 @app.get("/expenses")
@@ -118,11 +115,10 @@ def get_expenses(
     month: Optional[str] = None,
     from_date: Optional[str] = None,
     to_date: Optional[str] = None,
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    db = get_db()
     query = db.query(Expense).filter(Expense.user_id == current_user.id)
-
     if category:
         query = query.filter(Expense.category == category)
     if month:
@@ -131,12 +127,14 @@ def get_expenses(
         query = query.filter(Expense.date >= datetime.strptime(from_date, "%Y-%m-%d").date())
     if to_date:
         query = query.filter(Expense.date <= datetime.strptime(to_date, "%Y-%m-%d").date())
-
     return query.all()
 
 @app.post("/expenses", status_code=201)
-def create_expense(expense: ExpenseSchema, current_user: User = Depends(get_current_user)):
-    db = get_db()
+def create_expense(
+    expense: ExpenseSchema,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     new_expense = Expense(
         amount=expense.amount,
         category=expense.category,
@@ -150,9 +148,16 @@ def create_expense(expense: ExpenseSchema, current_user: User = Depends(get_curr
     return new_expense
 
 @app.patch("/expenses/{expense_id}")
-def update_expense(expense_id: int, expense: ExpenseUpdateSchema, current_user: User = Depends(get_current_user)):
-    db = get_db()
-    db_expense = db.query(Expense).filter(Expense.id == expense_id, Expense.user_id == current_user.id).first()
+def update_expense(
+    expense_id: int,
+    expense: ExpenseUpdateSchema,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    db_expense = db.query(Expense).filter(
+        Expense.id == expense_id,
+        Expense.user_id == current_user.id
+    ).first()
     if not db_expense:
         raise HTTPException(status_code=404, detail="Expense not found")
     if expense.amount is not None:
@@ -168,9 +173,15 @@ def update_expense(expense_id: int, expense: ExpenseUpdateSchema, current_user: 
     return db_expense
 
 @app.delete("/expenses/{expense_id}", status_code=204)
-def delete_expense(expense_id: int, current_user: User = Depends(get_current_user)):
-    db = get_db()
-    db_expense = db.query(Expense).filter(Expense.id == expense_id, Expense.user_id == current_user.id).first()
+def delete_expense(
+    expense_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    db_expense = db.query(Expense).filter(
+        Expense.id == expense_id,
+        Expense.user_id == current_user.id
+    ).first()
     if not db_expense:
         raise HTTPException(status_code=404, detail="Expense not found")
     db.delete(db_expense)
