@@ -27,6 +27,8 @@ spec:
                 secretKeyRef:
                   name: expense-secret
                   key: SECRET_KEY
+            - name: DB_PATH
+              value: "/app/data/expense.db"
       volumes:
         - name: data
           hostPath:
