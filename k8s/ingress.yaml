@@ -10,7 +10,7 @@ spec:
   tls:
     - hosts:
         - expense.rizalsolihin.my.id
-      secretName: kanban-tls
+      secretName: expense-tls
   rules:
     - host: expense.rizalsolihin.my.id
       http:
