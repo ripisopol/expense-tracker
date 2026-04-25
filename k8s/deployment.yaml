@@ -18,9 +18,17 @@ spec:
           image: ghcr.io/ripisopol/expense-tracker:latest
           ports:
             - containerPort: 8000
+          volumeMounts:
+            - name: data
+              mountPath: /app/data     
           env:
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: kanban-secret
+                  name: expense-secret
                   key: SECRET_KEY
+      volumes:
+        - name: data
+          hostPath:
+            path: /data/expense
+            type: DirectoryOrCreate   
