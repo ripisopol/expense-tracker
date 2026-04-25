@@ -15,45 +15,22 @@
       padding: 32px;
     }
 
-    /* AUTH PAGE */
+    h1 { font-size: 20px; color: #c8f135; margin-bottom: 24px; }
+
+    /* AUTH */
     .auth-page {
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 32px;
+      margin: -32px;
     }
 
-    .auth-box {
-      width: 100%;
-      max-width: 360px;
-    }
-
-    .auth-title {
-      font-size: 22px;
-      color: #c8f135;
-      margin-bottom: 8px;
-    }
-
-    .auth-subtitle {
-      font-size: 12px;
-      color: #555;
-      margin-bottom: 32px;
-    }
-
-    .auth-field {
-      margin-bottom: 14px;
-    }
-
-    .auth-field label {
-      display: block;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #555;
-      margin-bottom: 6px;
-    }
-
+    .auth-box { width: 100%; max-width: 360px; padding: 32px; }
+    .auth-title { font-size: 22px; color: #c8f135; margin-bottom: 8px; }
+    .auth-subtitle { font-size: 12px; color: #555; margin-bottom: 32px; }
+    .auth-field { margin-bottom: 14px; }
+    .auth-field label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #555; margin-bottom: 6px; }
     .auth-field input {
       width: 100%;
       font-family: monospace;
@@ -65,30 +42,16 @@
       padding: 10px 12px;
       outline: none;
       transition: border-color 0.15s;
+      color-scheme: dark;
     }
-
     .auth-field input:focus { border-color: #c8f135; }
-
-    .auth-actions {
-      margin-top: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .auth-error {
-      font-size: 12px;
-      color: #ef4444;
-      margin-top: 12px;
-      min-height: 16px;
-    }
-
+    .auth-error { font-size: 12px; color: #ef4444; margin-top: 12px; min-height: 16px; }
     .auth-toggle { font-size: 12px; color: #555; text-align: center; margin-top: 20px; }
     .auth-toggle span { color: #555; }
     .auth-toggle span span { color: #888; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
     .auth-toggle span span:hover { color: #c8f135; }
 
-    /* MAIN APP */
+    /* APP */
     .app-page { display: none; }
 
     .app-header {
@@ -98,19 +61,8 @@
       margin-bottom: 24px;
     }
 
-    h1 { font-size: 20px; color: #c8f135; }
+    .user-info { display: flex; align-items: center; gap: 12px; font-size: 12px; color: #888; }
 
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 12px;
-      color: #555;
-    }
-
-    .user-info span { color: #888; }
-
-    /* Summary */
     .summary {
       display: flex;
       gap: 12px;
@@ -129,7 +81,6 @@
     .summary-label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
     .summary-value { font-size: 18px; font-weight: bold; color: #c8f135; }
 
-    /* Toolbar */
     .toolbar {
       display: flex;
       gap: 8px;
@@ -154,6 +105,20 @@
     input:focus, select:focus { border-color: #c8f135; }
     select option { background: #141414; }
 
+    input[type="month"] {
+      font-family: monospace;
+      font-size: 12px;
+      background: #141414;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: #e8e8e8;
+      padding: 7px 10px;
+      outline: none;
+      color-scheme: dark;
+    }
+
+    input[type="month"]:focus { border-color: #c8f135; }
+
     button {
       font-family: monospace;
       font-size: 12px;
@@ -167,10 +132,14 @@
     }
 
     button:hover { color: #e8e8e8; border-color: #e8e8e8; }
-    button.primary { background: #c8f135; border-color: #c8f135; color: #0d0d0d; font-weight: bold; }
+    button.primary {
+      background: #c8f135;
+      border-color: #c8f135;
+      color: #0d0d0d;
+      font-weight: bold;
+    }
     button.primary:hover { background: #a8cc20; }
     button.danger:hover { color: #ef4444; border-color: #ef4444; }
-    button.save:hover { color: #c8f135; border-color: #c8f135; }
     button.logout:hover { color: #ef4444; border-color: #ef4444; }
 
     /* Time picker */
@@ -255,7 +224,13 @@
     .apply-btn:hover { background: #a8cc20; }
 
     /* Table */
-    table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      table-layout: fixed;
+    }
+
     th:nth-child(1) { width: 120px; }
     th:nth-child(2) { width: 130px; }
     th:nth-child(3) { width: auto; }
@@ -272,11 +247,20 @@
       border-bottom: 1px solid #252525;
     }
 
-    td { padding: 8px 12px; border-bottom: 1px solid #1a1a1a; vertical-align: middle; }
+    td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #1a1a1a;
+      vertical-align: middle;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     tr:hover td { background: #141414; }
+
     .amount { color: #c8f135; font-weight: bold; }
 
-    .category {
+    .category-badge {
       font-size: 11px;
       padding: 2px 8px;
       border-radius: 20px;
@@ -287,6 +271,9 @@
 
     .empty { text-align: center; color: #555; padding: 40px; font-size: 12px; }
 
+    .action-btns { display: flex; gap: 4px; justify-content: flex-end; }
+
+    /* Inline edit */
     .row-input {
       font-family: monospace;
       font-size: 12px;
@@ -301,7 +288,6 @@
 
     .row-input:focus { outline: none; }
     select.row-input { cursor: pointer; }
-    .action-btns { display: flex; gap: 4px; justify-content: flex-end; }
 
     /* Modal */
     .overlay {
@@ -323,8 +309,10 @@
       border-radius: 6px;
       padding: 24px;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       animation: slideUp 0.15s ease;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     @keyframes slideUp {
@@ -337,6 +325,30 @@
     .field label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #555; margin-bottom: 6px; }
     .field input, .field select { width: 100%; }
     .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+    /* Category manager */
+    .cat-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; min-height: 32px; }
+    .cat-tag {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+    }
+    .cat-tag button {
+      font-size: 10px;
+      padding: 0 3px;
+      border: none;
+      color: #555;
+      background: transparent;
+    }
+    .cat-tag button:hover { color: #ef4444; border: none; }
+
+    .cat-add { display: flex; gap: 6px; }
+    .cat-add input { flex: 1; }
   </style>
 </head>
 <body>
@@ -346,34 +358,30 @@
     <div class="auth-box">
       <div class="auth-title">expenses</div>
       <div class="auth-subtitle" id="auth-subtitle">sign in to your account</div>
-
       <div class="auth-field">
         <label>Username</label>
         <input type="text" id="auth-username" placeholder="yourname" autocomplete="username" />
       </div>
       <div class="auth-field">
         <label>Password</label>
-        <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') submitAuth()" />
+        <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter') submitAuth()" />
       </div>
-
       <div class="auth-error" id="auth-error"></div>
-
-      <div class="auth-actions">
-        <button class="primary" onclick="submitAuth()" id="auth-btn">sign in</button>
-      </div>
-
-      <div class="auth-toggle">
+      <button class="primary" onclick="submitAuth()" id="auth-btn" style="width:100%;padding:10px;margin-top:8px;font-size:13px;border-radius:4px;">sign in</button>
+      <div class="auth-toggle" style="margin-top:20px">
         <span id="auth-toggle-text">don't have an account? <span onclick="toggleAuthMode()">register</span></span>
       </div>
     </div>
   </div>
 
-  <!-- MAIN APP PAGE -->
+  <!-- APP PAGE -->
   <div class="app-page" id="app-page">
     <div class="app-header">
       <h1>expenses</h1>
       <div class="user-info">
         <span id="username-display"></span>
+        <button onclick="openCatModal()" style="font-size:11px;">categories</button>
         <button class="logout" onclick="logout()">logout</button>
       </div>
     </div>
@@ -396,13 +404,7 @@
     <div class="toolbar">
       <select id="filter-category" onchange="loadExpenses()">
         <option value="">all categories</option>
-        <option value="food">food</option>
-        <option value="transport">transport</option>
-        <option value="bills">bills</option>
-        <option value="ngopay">ngopay</option>
-        <option value="other">other</option>
       </select>
-
       <div class="time-picker" id="time-picker">
         <button class="time-picker-btn" onclick="toggleTimePicker()">
           <span class="icon">🕐</span>
@@ -416,7 +418,7 @@
             <button class="quick-btn" onclick="applyQuick('yesterday', 'Yesterday')">Yesterday</button>
             <button class="quick-btn" onclick="applyQuick('last7', 'Last 7 days')">Last 7 days</button>
             <button class="quick-btn" onclick="applyQuick('last30', 'Last 30 days')">Last 30 days</button>
-            <button class="quick-btn active" onclick="applyQuick('thisMonth', 'This month')">This month</button>
+            <button class="quick-btn" onclick="applyQuick('thisMonth', 'This month')">This month</button>
             <button class="quick-btn" onclick="applyQuick('lastMonth', 'Last month')">Last month</button>
             <button class="quick-btn" onclick="applyQuick('thisYear', 'This year')">This year</button>
             <button class="quick-btn" onclick="applyQuick('all', 'All time')">All time</button>
@@ -435,7 +437,6 @@
           </div>
         </div>
       </div>
-
       <button class="primary" onclick="openModal()">+ add expense</button>
     </div>
 
@@ -451,56 +452,61 @@
       </thead>
       <tbody id="expense-list"></tbody>
     </table>
+  </div>
 
-    <div class="overlay" id="overlay">
-      <div class="modal">
-        <h2>add expense</h2>
-        <div class="field">
-          <label>Amount (IDR)</label>
-          <input type="number" id="input-amount" placeholder="50000" />
-        </div>
-        <div class="field">
-          <label>Category</label>
-          <select id="input-category">
-            <option value="food">food</option>
-            <option value="transport">transport</option>
-            <option value="bills">bills</option>
-            <option value="ngopay">ngopay</option>
-            <option value="other">other</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Description</label>
-          <input type="text" id="input-desc" placeholder="optional" />
-        </div>
-        <div class="field">
-          <label>Date</label>
-          <input type="date" id="input-date" />
-        </div>
-        <div class="modal-actions">
-          <button onclick="closeModal()">cancel</button>
-          <button class="primary" onclick="submitExpense()">save</button>
-        </div>
+  <!-- Add Expense Modal -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2>add expense</h2>
+      <div class="field">
+        <label>Amount (IDR)</label>
+        <input type="number" id="input-amount" placeholder="50000" />
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <select id="input-category"></select>
+      </div>
+      <div class="field">
+        <label>Description</label>
+        <input type="text" id="input-desc" placeholder="optional" />
+      </div>
+      <div class="field">
+        <label>Date</label>
+        <input type="date" id="input-date" />
+      </div>
+      <div class="modal-actions">
+        <button onclick="closeModal()">cancel</button>
+        <button class="primary" onclick="submitExpense()">save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Manager Modal -->
+  <div class="overlay" id="cat-overlay">
+    <div class="modal">
+      <h2>manage categories</h2>
+      <div class="cat-list" id="cat-list"></div>
+      <div class="cat-add">
+        <input type="text" id="cat-input" placeholder="new category name"
+          onkeydown="if(event.key==='Enter') addCategory()" />
+        <button class="primary" onclick="addCategory()">add</button>
+      </div>
+      <div class="modal-actions">
+        <button onclick="closeCatModal()">close</button>
       </div>
     </div>
   </div>
 
   <script>
-    // --- State ---
-    let token = localStorage.getItem('token')
-    let currentUsername = localStorage.getItem('username')
+    let token = localStorage.getItem('expense_token')
+    let currentUsername = localStorage.getItem('expense_username')
     let isRegisterMode = false
     let dateFrom = null
     let dateTo = null
+    let categories = []
 
-    // --- Init ---
-    document.getElementById('input-date').value = new Date().toISOString().split('T')[0]
-
-    if (token) {
-      showApp()
-    } else {
-      showAuth()
-    }
+    if (token) showApp()
+    else showAuth()
 
     // --- Auth ---
     function showAuth() {
@@ -512,17 +518,24 @@
       document.getElementById('auth-page').style.display = 'none'
       document.getElementById('app-page').style.display = 'block'
       document.getElementById('username-display').textContent = currentUsername || ''
-      applyQuick('thisMonth', 'This month')
+      document.getElementById('input-date').value = new Date().toISOString().split('T')[0]
+      loadCategories().then(() => applyQuick('thisMonth', 'This month'))
     }
 
     function toggleAuthMode() {
       isRegisterMode = !isRegisterMode
-      document.getElementById('auth-btn').textContent = isRegisterMode ? 'register' : 'sign in'
-      document.getElementById('auth-subtitle').textContent = isRegisterMode ? 'create an account' : 'sign in to your account'
-      document.getElementById('auth-toggle-text').innerHTML = isRegisterMode
-        ? 'already have an account? <span onclick="toggleAuthMode()">sign in</span>'
-        : 'don\'t have an account? <span onclick="toggleAuthMode()">register</span>'
       document.getElementById('auth-error').textContent = ''
+      document.getElementById('auth-username').value = ''
+      document.getElementById('auth-password').value = ''
+      if (isRegisterMode) {
+        document.getElementById('auth-btn').textContent = 'register'
+        document.getElementById('auth-subtitle').textContent = 'create an account'
+        document.getElementById('auth-toggle-text').innerHTML = 'already have an account? <span onclick="toggleAuthMode()">sign in</span>'
+      } else {
+        document.getElementById('auth-btn').textContent = 'sign in'
+        document.getElementById('auth-subtitle').textContent = 'sign in to your account'
+        document.getElementById('auth-toggle-text').innerHTML = "don't have an account? <span onclick=\"toggleAuthMode()\">register</span>"
+      }
     }
 
     async function submitAuth() {
@@ -532,7 +545,6 @@
         document.getElementById('auth-error').textContent = 'username and password required'
         return
       }
-
       if (isRegisterMode) {
         const res = await fetch('/register', {
           method: 'POST',
@@ -544,32 +556,26 @@
           document.getElementById('auth-error').textContent = err.detail || 'registration failed'
           return
         }
-        // auto-login after register
         isRegisterMode = false
         await submitAuth()
         return
       }
-
-      // Login via OAuth2 form
       const form = new URLSearchParams()
       form.append('username', username)
       form.append('password', password)
-
       const res = await fetch('/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: form
       })
-
       if (!res.ok) {
         document.getElementById('auth-error').textContent = 'incorrect username or password'
         return
       }
-
       const data = await res.json()
       token = data.access_token
-      localStorage.setItem('token', token)
-      localStorage.setItem('username', username)
+      localStorage.setItem('expense_token', token)
+      localStorage.setItem('expense_username', username)
       currentUsername = username
       showApp()
     }
@@ -577,36 +583,87 @@
     function logout() {
       token = null
       currentUsername = null
-      localStorage.removeItem('token')
-      localStorage.removeItem('username')
+      localStorage.removeItem('expense_token')
+      localStorage.removeItem('expense_username')
+      document.getElementById('auth-username').value = ''
+      document.getElementById('auth-password').value = ''
+      document.getElementById('auth-error').textContent = ''
+      isRegisterMode = false
+      document.getElementById('auth-btn').textContent = 'sign in'
+      document.getElementById('auth-subtitle').textContent = 'sign in to your account'
+      document.getElementById('auth-toggle-text').innerHTML = "don't have an account? <span onclick=\"toggleAuthMode()\">register</span>"
       showAuth()
     }
 
-    // --- Authed fetch ---
     function authFetch(url, options = {}) {
       return fetch(url, {
         ...options,
-        headers: {
-          ...(options.headers || {}),
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { ...(options.headers || {}), 'Authorization': `Bearer ${token}` }
       })
     }
 
-    // --- Helpers ---
-    function formatIDR(amount) {
-      return 'Rp ' + amount.toLocaleString('id-ID')
+    // --- Categories ---
+    async function loadCategories() {
+      const res = await authFetch('/categories')
+      if (res.status === 401) { logout(); return }
+      categories = await res.json()
+      renderCategoryDropdowns()
+      renderCatList()
     }
 
-    function getCurrentMonth() {
-      return new Date().toISOString().slice(0, 7)
+    function renderCategoryDropdowns() {
+      const filterSel = document.getElementById('filter-category')
+      const inputSel = document.getElementById('input-category')
+
+      filterSel.innerHTML = '<option value="">all categories</option>'
+      inputSel.innerHTML = ''
+
+      categories.forEach(cat => {
+        filterSel.innerHTML += `<option value="${cat.name}">${cat.name}</option>`
+        inputSel.innerHTML += `<option value="${cat.name}">${cat.name}</option>`
+      })
     }
 
-    function toISO(d) {
-      const offset = d.getTimezoneOffset()
-      const local = new Date(d.getTime() - offset * 60000)
-      return local.toISOString().split('T')[0]
+    function renderCatList() {
+      const list = document.getElementById('cat-list')
+      if (categories.length === 0) {
+        list.innerHTML = '<span style="color:#555;font-size:12px;">no categories yet</span>'
+        return
+      }
+      list.innerHTML = categories.map(cat => `
+        <div class="cat-tag">
+          <span>${cat.name}</span>
+          <button onclick="deleteCategory(${cat.id})">×</button>
+        </div>
+      `).join('')
     }
+
+    async function addCategory() {
+      const input = document.getElementById('cat-input')
+      const name = input.value.trim()
+      if (!name) return
+      const res = await authFetch('/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        alert(err.detail || 'Failed to add category')
+        return
+      }
+      input.value = ''
+      await loadCategories()
+    }
+
+    async function deleteCategory(id) {
+      await authFetch(`/categories/${id}`, { method: 'DELETE' })
+      await loadCategories()
+      loadExpenses()
+    }
+
+    function openCatModal() { document.getElementById('cat-overlay').classList.add('open') }
+    function closeCatModal() { document.getElementById('cat-overlay').classList.remove('open') }
 
     // --- Time picker ---
     function toggleTimePicker() {
@@ -619,13 +676,21 @@
       }
     })
 
+    function toISO(d) {
+      const offset = d.getTimezoneOffset()
+      const local = new Date(d.getTime() - offset * 60000)
+      return local.toISOString().split('T')[0]
+    }
+
+    function getCurrentMonth() {
+      return new Date().toISOString().slice(0, 7)
+    }
+
     function applyQuick(range, label) {
       const now = new Date()
       const today = toISO(now)
-
-      if (range === 'today') {
-        dateFrom = today; dateTo = today
-      } else if (range === 'yesterday') {
+      if (range === 'today') { dateFrom = today; dateTo = today }
+      else if (range === 'yesterday') {
         const y = new Date(now); y.setDate(y.getDate() - 1)
         dateFrom = toISO(y); dateTo = toISO(y)
       } else if (range === 'last7') {
@@ -645,7 +710,6 @@
       } else if (range === 'all') {
         dateFrom = null; dateTo = null
       }
-
       document.getElementById('time-label').textContent = label
       document.querySelectorAll('.quick-btn').forEach(b => {
         b.classList.toggle('active', b.textContent === label)
@@ -692,7 +756,7 @@
         tr.dataset.id = exp.id
         tr.innerHTML = `
           <td>${exp.date}</td>
-          <td><span class="category">${exp.category}</span></td>
+          <td><span class="category-badge">${exp.category}</span></td>
           <td style="color:#888">${exp.description || '—'}</td>
           <td class="amount">${formatIDR(exp.amount)}</td>
           <td>
@@ -709,22 +773,19 @@
     function editRow(id, date, category, description, amount) {
       event.stopPropagation()
       const tr = document.querySelector(`tr[data-id="${id}"]`)
+      const catOptions = categories.map(c =>
+        `<option value="${c.name}" ${c.name === category ? 'selected' : ''}>${c.name}</option>`
+      ).join('')
       tr.innerHTML = `
         <td><input class="row-input" type="date" id="edit-date-${id}" value="${date}" /></td>
         <td>
-          <select class="row-input" id="edit-category-${id}">
-            <option value="food" ${category==='food'?'selected':''}>food</option>
-            <option value="transport" ${category==='transport'?'selected':''}>transport</option>
-            <option value="bills" ${category==='bills'?'selected':''}>bills</option>
-            <option value="ngopay" ${category==='ngopay'?'selected':''}>ngopay</option>
-            <option value="other" ${category==='other'?'selected':''}>other</option>
-          </select>
+          <select class="row-input" id="edit-category-${id}">${catOptions}</select>
         </td>
         <td><input class="row-input" type="text" id="edit-desc-${id}" value="${description}" /></td>
         <td><input class="row-input" type="number" id="edit-amount-${id}" value="${amount}" /></td>
         <td>
           <div class="action-btns">
-            <button class="save" onclick="saveRow(${id})">save</button>
+            <button style="color:#c8f135;border-color:#c8f135;" onclick="saveRow(${id})">save</button>
             <button onclick="event.stopPropagation(); loadExpenses()">cancel</button>
           </div>
         </td>
@@ -732,23 +793,16 @@
     }
 
     async function saveRow(id) {
-      const date = document.getElementById(`edit-date-${id}`).value
+      const date = new Date(document.getElementById(`edit-date-${id}`).value).toISOString().split('T')[0]
       const category = document.getElementById(`edit-category-${id}`).value
       const description = document.getElementById(`edit-desc-${id}`).value
       const amount = parseFloat(document.getElementById(`edit-amount-${id}`).value)
-
       const res = await authFetch(`/expenses/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ date, category, description, amount })
       })
-
-      if (res.status === 401) { logout(); return }
-      if (!res.ok) {
-        const err = await res.json()
-        console.error('PATCH error:', err)
-        return
-      }
+      if (!res.ok) { console.error('Save failed'); return }
       loadExpenses()
     }
 
@@ -756,15 +810,17 @@
       const total = filteredExpenses.reduce((sum, e) => sum + e.amount, 0)
       document.getElementById('total').textContent = formatIDR(total)
       document.getElementById('count').textContent = filteredExpenses.length
-
       const now = new Date()
       const firstDay = `${getCurrentMonth()}-01`
       const today = toISO(now)
       const res = await authFetch(`/expenses?from_date=${firstDay}&to_date=${today}`)
-      if (res.status === 401) { logout(); return }
       const monthExpenses = await res.json()
       const monthTotal = monthExpenses.reduce((sum, e) => sum + e.amount, 0)
       document.getElementById('month-total').textContent = formatIDR(monthTotal)
+    }
+
+    function formatIDR(amount) {
+      return 'Rp ' + amount.toLocaleString('id-ID')
     }
 
     function openModal() { document.getElementById('overlay').classList.add('open') }
@@ -776,14 +832,12 @@
       const description = document.getElementById('input-desc').value
       const date = document.getElementById('input-date').value
       if (!amount || !date) { alert('Amount and date are required'); return }
-
-      const res = await authFetch('/expenses', {
+      if (!category) { alert('Please add a category first'); return }
+      await authFetch('/expenses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount, category, description, date })
       })
-
-      if (res.status === 401) { logout(); return }
       closeModal()
       document.getElementById('input-amount').value = ''
       document.getElementById('input-desc').value = ''
@@ -791,8 +845,7 @@
     }
 
     async function deleteExpense(id) {
-      const res = await authFetch(`/expenses/${id}`, { method: 'DELETE' })
-      if (res.status === 401) { logout(); return }
+      await authFetch(`/expenses/${id}`, { method: 'DELETE' })
       loadExpenses()
     }
   </script>

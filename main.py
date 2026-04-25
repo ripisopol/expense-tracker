@@ -9,10 +9,11 @@ from pydantic import BaseModel
 from typing import Optional
 from jose import JWTError, jwt
 import bcrypt
+import os
 from database import Base, engine, get_db
-from models import Expense, User
+from models import Expense, User, Category
 
-SECRET_KEY = "change-this-to-a-random-secret-in-production"
+SECRET_KEY = os.getenv("SECRET_KEY", "local-dev-only")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
@@ -92,6 +93,55 @@ def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
 @app.get("/me")
 def me(current_user: User = Depends(get_current_user)):
     return {"id": current_user.id, "username": current_user.username}
+
+# --- Category schemas ---
+
+class CategorySchema(BaseModel):
+    name: str
+
+# --- Category routes ---
+
+@app.get("/categories")
+def get_categories(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return db.query(Category).filter(Category.user_id == current_user.id).all()
+
+@app.post("/categories", status_code=201)
+def create_category(
+    category: CategorySchema,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Prevent duplicate category names per user
+    existing = db.query(Category).filter(
+        Category.name == category.name,
+        Category.user_id == current_user.id
+    ).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Category already exists")
+    new_category = Category(name=category.name, user_id=current_user.id)
+    db.add(new_category)
+    db.commit()
+    db.refresh(new_category)
+    return new_category
+
+@app.delete("/categories/{category_id}", status_code=204)
+def delete_category(
+    category_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    cat = db.query(Category).filter(
+        Category.id == category_id,
+        Category.user_id == current_user.id
+    ).first()
+    if not cat:
+        raise HTTPException(status_code=404, detail="Category not found")
+    db.delete(cat)
+    db.commit()
+    return None
 
 # --- Expense schemas ---
 

@@ -9,7 +9,16 @@ class User(Base):
     username      = Column(String, unique=True, nullable=False, index=True)
     password_hash = Column(String, nullable=False)
 
-    expenses = relationship("Expense", back_populates="user")
+    expenses   = relationship("Expense", back_populates="user")
+    categories = relationship("Category", back_populates="user")
+
+class Category(Base):
+    __tablename__ = "categories"
+
+    id      = Column(Integer, primary_key=True, index=True)
+    name    = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user    = relationship("User", back_populates="categories")
 
 class Expense(Base):
     __tablename__ = "expenses"
@@ -20,5 +29,4 @@ class Expense(Base):
     description = Column(String, nullable=True)
     date        = Column(Date, nullable=False)
     user_id     = Column(Integer, ForeignKey("users.id"), nullable=False)
-
-    user = relationship("User", back_populates="expenses")
+    user        = relationship("User", back_populates="expenses")
